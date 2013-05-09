@@ -1,0 +1,16 @@
+{
+  "name": "mini-lds-tools",
+  "version": "0.0.1",
+  "description": "Mini LDS tools.",
+  "author": "Nate Fitch <nfitch@nfprod.com>",
+  "engine": [ "node >= 0.8.1" ],
+  "private": true,
+  "keywords": [],
+  "devDependencies": {
+    "bunyan": "latest",
+    "node-static": "latest",
+    "restify": "latest"
+  },
+  "files": ["server.js", "static","package.json","README.md"],
+  "main": "server.js"
+}
