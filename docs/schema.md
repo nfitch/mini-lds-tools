@@ -17,8 +17,8 @@ The users table contains auth information for the system:
     users
     -------------
     name
-    shared_secret
-    creation_date
+    secret
+    create_time
 
 # `members`
 

@@ -6,10 +6,20 @@
   "engine": [ "node >= 0.8.1" ],
   "private": true,
   "keywords": [],
-  "devDependencies": {
+  "dependencies": {
+    "assert-plus": "latest",
     "bunyan": "latest",
+    "carrier": "latest",
     "node-static": "latest",
-    "restify": "latest"
+    "restify": "latest",
+    "sqlite3": "latest",
+    "vasync": "latest"
+  },
+  "devDependencies": {
+    "nodeunit": "latest"
+  },
+  "scripts": {
+    "test": "find test/ -name '*.test.js' | xargs -n 1 ./node_modules/nodeunit/bin/nodeunit"
   },
   "files": ["server.js", "static","package.json","README.md"],
   "main": "server.js"
