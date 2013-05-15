@@ -27,6 +27,7 @@ If the interface isn't self-explanatory, then these tools are a failure.
 1. ✓ Mock out Webapp
 1. ✓ Define security interactions
 1. ✓ Define REST API
+1. ✓ Define CLI
 1. Sqlite schema
 1. Persistence layer
 1. Restify security filter

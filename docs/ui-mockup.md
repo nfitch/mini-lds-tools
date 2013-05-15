@@ -51,8 +51,8 @@ Clicking on a name brings you to a detail page:
      -----------------------------------------
     | < Back |                                |
     |-----------------------------------------|
-    | Name: Smith, Alvin        Known, Active |
-    | Age: 32                 Priests Q. Adv. |
+    | Name: Smith, Alvin                  | | |
+    | Known, Active, Age: 32              | V |
     |-----------------------------------------|
     | Type to add comment                 | + |
     |-----------------------------------------|
@@ -63,5 +63,25 @@ Clicking on a name brings you to a detail page:
     | Comment 6                               |
     v v v v v v v v v v v v v v v v v v v v v v
 
-Comments are typed and submitted.  Hitting Back will take you back to the
-front page.
+Comments are typed and submitted.  Hitting Back will take you back to the front
+page.  Hitting the `V` (down) arrow will expand the details to include all
+fields, in sorted order (we'll only special case a few fields to give an
+overview).  For example:
+
+     -----------------------------------------
+    | < Back |                                |
+    |-----------------------------------------|
+    | Name: Smith, Alvin                  | ^ |
+    | Known, Active, Age: 32              | | |
+    | Move in Date:  6/12/2011            | | |
+    | Current Calling: Priests Q. Adv     | | |
+    | Head Of Household: Yes              | | |
+    |-----------------------------------------|
+    | Type to add comment                 | + |
+    |-----------------------------------------|
+    | Comment 10                              |
+    | Comment 9                               |
+    | Comment 8                               |
+    | Comment 7                               |
+    | Comment 6                               |
+    v v v v v v v v v v v v v v v v v v v v v v
