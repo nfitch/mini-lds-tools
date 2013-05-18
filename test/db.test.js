@@ -124,15 +124,13 @@ test('user crud', function (t) {
 
 test('member crud', function (t) {
         var id = '1234';
-        var n1 = 'Nathan';
-        var n2 = 'Nate';
-        var l1 = 'Hansen';
-        var l2 = 'Hanson';
+        var n1 = 'Nathan Hansen';
+        var n2 = 'Nate Hansen';
         vasync.pipeline({
                 funcs: [
                         // Create
                         function (_, cb) {
-                                var m = { id: id, firstName: n1, lastName: l1 };
+                                var m = { id: id, fullName: n1 };
                                 Db.putMember(m, function (err) {
                                         cb(err);
                                 });
@@ -145,8 +143,7 @@ test('member crud', function (t) {
                                                 return;
                                         }
                                         assert.equal(id, member.id);
-                                        assert.equal(n1, member.firstName);
-                                        assert.equal(l1, member.lastName);
+                                        assert.equal(n1, member.fullName);
                                         assert.ok(member.known === null);
                                         assert.ok(member.active === null);
                                         cb();
@@ -154,7 +151,7 @@ test('member crud', function (t) {
                         },
                         // Update
                         function (_, cb) {
-                                var m = { id: id, firstName: n2, lastName: l2 };
+                                var m = { id: id, fullName: n2 };
                                 Db.putMember(m, function (err) {
                                         cb(err);
                                 });
@@ -179,8 +176,7 @@ test('member crud', function (t) {
                                                 return;
                                         }
                                         assert.equal(id, member.id);
-                                        assert.equal(n2, member.firstName);
-                                        assert.equal(l2, member.lastName);
+                                        assert.equal(n2, member.fullName);
                                         assert.equal('no', member.known);
                                         assert.equal('yes', member.active);
                                         cb();

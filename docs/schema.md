@@ -18,7 +18,7 @@ The users table contains auth information for the system:
     -------------
     name
     secret
-    create_time
+    createTime
 
 # `members`
 
@@ -29,8 +29,7 @@ comments for those that have moved away.
     members
     ------------
     id
-    first_name
-    last_name
+    fullName
     known
 
 # `comments`
@@ -40,7 +39,7 @@ The comments table contains comments, by date, that are associated with members.
     comments
     ------------
     id
-    date
+    createTime
     comment
 
 # `mls`
