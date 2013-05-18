@@ -121,3 +121,79 @@ test('user crud', function (t) {
         });
 
 });
+
+test('member crud', function (t) {
+        var id = '1234';
+        var n1 = 'Nathan';
+        var n2 = 'Nate';
+        var l1 = 'Hansen';
+        var l2 = 'Hanson';
+        vasync.pipeline({
+                funcs: [
+                        // Create
+                        function (_, cb) {
+                                var m = { id: id, firstName: n1, lastName: l1 };
+                                Db.putMember(m, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        // Get
+                        function (_, cb) {
+                                Db.getMember(id, function (err, member) {
+                                        if (err) {
+                                                cb(err);
+                                                return;
+                                        }
+                                        assert.equal(id, member.id);
+                                        assert.equal(n1, member.firstName);
+                                        assert.equal(l1, member.lastName);
+                                        assert.ok(member.known === null);
+                                        assert.ok(member.active === null);
+                                        cb();
+                                });
+                        },
+                        // Update
+                        function (_, cb) {
+                                var m = { id: id, firstName: n2, lastName: l2 };
+                                Db.putMember(m, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        function (_, cb) {
+                                var args = { id: id, known: 'no' };
+                                Db.updateKnown(args, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        function (_, cb) {
+                                var args = { id: id, active: 'yes' };
+                                Db.updateActive(args, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        // Get && Verify Update
+                        function (_, cb) {
+                                Db.getMember(id, function (err, member) {
+                                        if (err) {
+                                                cb(err);
+                                                return;
+                                        }
+                                        assert.equal(id, member.id);
+                                        assert.equal(n2, member.firstName);
+                                        assert.equal(l2, member.lastName);
+                                        assert.equal('no', member.known);
+                                        assert.equal('yes', member.active);
+                                        cb();
+                                });
+                        }
+                ]
+        }, function (err) {
+                if (err) {
+                        console.log(err);
+                        t.fail(err);
+                        return;
+                }
+                t.done();
+        });
+
+});
