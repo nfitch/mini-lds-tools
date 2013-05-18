@@ -189,7 +189,71 @@ test('member crud', function (t) {
                 ]
         }, function (err) {
                 if (err) {
-                        console.log(err);
+                        t.fail(err);
+                        return;
+                }
+                t.done();
+        });
+
+});
+
+test('comments', function (t) {
+        var member = { id: '1234' };
+        var d1 = '2013-05-10T05:19:19.000Z';
+        var d2 = '2013-06-10T11:21:21.000Z';
+        var c1 = 'Gave talk today.';
+        var c2 = 'Called to the nursery.';
+        vasync.pipeline({
+                funcs: [
+                        // Add one
+                        function (_, cb) {
+                                var opts = { member: member,
+                                             createTime: d1,
+                                             comment: c1
+                                           };
+                                Db.addComment(opts, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        // Get and Verify
+                        function (_, cb) {
+                                Db.getComments(member.id, function (err, res) {
+                                        assert.ok(res.length === 1);
+                                        assert.object(res[0]);
+                                        assert.equal(res[0].id, member.id);
+                                        assert.equal(res[0].createTime, d1);
+                                        assert.equal(res[0].comment, c1);
+                                        cb(err);
+                                });
+                        },
+                        // Add the second
+                        function (_, cb) {
+                                var opts = { member: member,
+                                             createTime: d2,
+                                             comment: c2
+                                           };
+                                Db.addComment(opts, function (err) {
+                                        cb(err);
+                                });
+                        },
+                        // Get and Verify both, correct order
+                        function (_, cb) {
+                                Db.getComments(member.id, function (err, res) {
+                                        assert.ok(res.length === 2);
+                                        assert.object(res[0]);
+                                        assert.object(res[1]);
+                                        assert.equal(res[0].id, member.id);
+                                        assert.equal(res[0].createTime, d1);
+                                        assert.equal(res[0].comment, c1);
+                                        assert.equal(res[1].id, member.id);
+                                        assert.equal(res[1].createTime, d2);
+                                        assert.equal(res[1].comment, c2);
+                                        cb(err);
+                                });
+                        }
+                ]
+        }, function (err) {
+                if (err) {
                         t.fail(err);
                         return;
                 }
