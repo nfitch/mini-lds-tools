@@ -62,8 +62,8 @@ test('user crud', function (t) {
                                                 cb(err);
                                                 return;
                                         }
-                                        assert.equal(n, user.name);
-                                        assert.equal(s1, user.secret);
+                                        t.equal(n, user.name);
+                                        t.equal(s1, user.secret);
                                         createTime = user.createTime;
                                         cb();
                                 });
@@ -82,9 +82,9 @@ test('user crud', function (t) {
                                                 cb(err);
                                                 return;
                                         }
-                                        assert.equal(n, user.name);
-                                        assert.equal(s2, user.secret);
-                                        assert.equal(createTime, user.createTime);
+                                        t.equal(n, user.name);
+                                        t.equal(s2, user.secret);
+                                        t.equal(createTime, user.createTime);
                                         cb();
                                 });
                         },
@@ -107,7 +107,7 @@ test('user crud', function (t) {
                                                 cb(err);
                                                 return;
                                         }
-                                        assert.ok(user === undefined);
+                                        t.ok(user === undefined);
                                         cb();
                                 });
                         }
@@ -142,10 +142,10 @@ test('member crud', function (t) {
                                                 cb(err);
                                                 return;
                                         }
-                                        assert.equal(id, member.id);
-                                        assert.equal(n1, member.fullName);
-                                        assert.ok(member.known === null);
-                                        assert.ok(member.active === null);
+                                        t.equal(id, member.id);
+                                        t.equal(n1, member.fullName);
+                                        t.ok(member.known === null);
+                                        t.ok(member.active === null);
                                         cb();
                                 });
                         },
@@ -175,10 +175,10 @@ test('member crud', function (t) {
                                                 cb(err);
                                                 return;
                                         }
-                                        assert.equal(id, member.id);
-                                        assert.equal(n2, member.fullName);
-                                        assert.equal('no', member.known);
-                                        assert.equal('yes', member.active);
+                                        t.equal(id, member.id);
+                                        t.equal(n2, member.fullName);
+                                        t.equal('no', member.known);
+                                        t.equal('yes', member.active);
                                         cb();
                                 });
                         }
@@ -214,11 +214,11 @@ test('comments', function (t) {
                         // Get and Verify
                         function (_, cb) {
                                 DB.getComments(member.id, function (err, res) {
-                                        assert.ok(res.length === 1);
+                                        t.ok(res.length === 1);
                                         assert.object(res[0]);
-                                        assert.equal(res[0].id, member.id);
-                                        assert.equal(res[0].createTime, d1);
-                                        assert.equal(res[0].comment, c1);
+                                        t.equal(res[0].id, member.id);
+                                        t.equal(res[0].createTime, d1);
+                                        t.equal(res[0].comment, c1);
                                         cb(err);
                                 });
                         },
@@ -235,15 +235,15 @@ test('comments', function (t) {
                         // Get and Verify both, correct order
                         function (_, cb) {
                                 DB.getComments(member.id, function (err, res) {
-                                        assert.ok(res.length === 2);
+                                        t.ok(res.length === 2);
                                         assert.object(res[0]);
                                         assert.object(res[1]);
-                                        assert.equal(res[0].id, member.id);
-                                        assert.equal(res[0].createTime, d1);
-                                        assert.equal(res[0].comment, c1);
-                                        assert.equal(res[1].id, member.id);
-                                        assert.equal(res[1].createTime, d2);
-                                        assert.equal(res[1].comment, c2);
+                                        t.equal(res[0].id, member.id);
+                                        t.equal(res[0].createTime, d1);
+                                        t.equal(res[0].comment, c1);
+                                        t.equal(res[1].id, member.id);
+                                        t.equal(res[1].createTime, d2);
+                                        t.equal(res[1].comment, c2);
                                         cb(err);
                                 });
                         }
@@ -286,14 +286,14 @@ test('mls', function (t) {
                         function (_, cb) {
                                 DB.getAllMls(function (err, res) {
                                         //Test some random rows.
-                                        assert.ok(res.length === 2);
-                                        assert.ok(res[0].recordNumber ===
+                                        t.ok(res.length === 2);
+                                        t.ok(res[0].recordNumber ===
                                                   '000');
-                                        assert.ok(res[0].fullName ===
+                                        t.ok(res[0].fullName ===
                                                   'Smith, Ross');
-                                        assert.ok(res[1].recordNumber ===
+                                        t.ok(res[1].recordNumber ===
                                                   '001');
-                                        assert.ok(res[1].isMember ===
+                                        t.ok(res[1].isMember ===
                                                   'Yes');
                                         cb();
                                 });
@@ -301,11 +301,39 @@ test('mls', function (t) {
                         function (_, cb) {
                                 DB.getJoinedMember('000', function (err, m) {
                                         assert.object(m, 'member');
-                                        assert.equal('000', m.id);
-                                        assert.equal('000', m.recordNumber);
-                                        assert.equal('Smith, Ross', m.fullName);
-                                        assert.ok(null === m.known);
-                                        assert.ok(null === m.active);
+                                        t.equal('000', m.id);
+                                        t.equal('000', m.recordNumber);
+                                        t.equal('Smith, Ross', m.fullName);
+                                        t.ok(null === m.known);
+                                        t.ok(null === m.active);
+                                        cb();
+                                });
+                        },
+                        function (_, cb) {
+                                var opts = { field: 'fullName',
+                                             term: 'i' };
+                                DB.searchMls(opts, function (err, res) {
+                                        t.equal(2, res.length);
+                                        t.ok(res[0].recordNumber ===
+                                                  '000');
+                                        t.ok(res[0].fullName ===
+                                                  'Smith, Ross');
+                                        t.ok(res[1].recordNumber ===
+                                                  '001');
+                                        t.ok(res[1].isMember ===
+                                                  'Yes');
+                                        cb();
+                                });
+                        },
+                        function (_, cb) {
+                                var opts = { field: 'fullName',
+                                             term: 'Ross' };
+                                DB.searchMls(opts, function (err, res) {
+                                        t.equal(1, res.length);
+                                        t.ok(res[0].recordNumber ===
+                                                  '000');
+                                        t.ok(res[0].fullName ===
+                                                  'Smith, Ross');
                                         cb();
                                 });
                         }

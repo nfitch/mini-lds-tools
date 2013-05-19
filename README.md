@@ -14,13 +14,25 @@ and keeping personal notes about visits made, etc.
 
 ## Command-line tools
 
+See [the CLI](docs/cli.md)
+
 ## Server and REST API
 
 See [the REST api](docs/rest-api.md)
 
 ## Web App
 
-If the interface isn't self-explanatory, then these tools are a failure.
+If the interface isn't self-explanatory, then these tools are a
+failure... though these are [the UI mockups](docs/ui-mockup.md)
+
+## SQLite3 access
+
+You should be familiar with sqlite3 (guide is here
+http://www.sqlite.org/sqlite.html), but this should get you started:
+
+    $ sqlite3 [path to db]
+    sqlite> .tables
+    sqlite> .schema [table]
 
 ## TODO
 
@@ -29,7 +41,7 @@ If the interface isn't self-explanatory, then these tools are a failure.
 1. ✓ Define REST API
 1. ✓ Define CLI
 1. ✓ Sqlite schema
-1. Persistence layer
+1. ✓ Persistence layer
 1. Restify security filter
 1. Implement API over persistence
 1. Import cli
