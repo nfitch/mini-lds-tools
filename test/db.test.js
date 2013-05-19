@@ -8,19 +8,19 @@ var test = helper.test;
 var log = helper.createLogger();
 
 var TEMP_DB_FILENAME = '/tmp/mini_lds_tools_sqlite_test_db';
-var Db = null;
+var DB = null;
 
 helper.before(function (cb) {
-        Db = new db.Db({
+        DB = new db.Db({
                 fileName: TEMP_DB_FILENAME,
                 log: log
         });
 
-        Db.on('ready', function () {
+        DB.on('ready', function () {
                 cb();
         });
 
-        Db.on('error', function (err) {
+        DB.on('error', function (err) {
                 cb(err);
         });
 });
@@ -51,13 +51,13 @@ test('user crud', function (t) {
                         // Create
                         function (_, cb) {
                                 var u = { name: n, secret: s1 };
-                                Db.putUser(u, function (err) {
+                                DB.putUser(u, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get
                         function (_, cb) {
-                                Db.getUser(n, function (err, user) {
+                                DB.getUser(n, function (err, user) {
                                         if (err) {
                                                 cb(err);
                                                 return;
@@ -71,13 +71,13 @@ test('user crud', function (t) {
                         // Update
                         function (_, cb) {
                                 var u = { name: n, secret: s2 };
-                                 Db.putUser(u, function (err) {
+                                 DB.putUser(u, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get && Verify Update
                         function (_, cb) {
-                                Db.getUser(n, function (err, user) {
+                                DB.getUser(n, function (err, user) {
                                         if (err) {
                                                 cb(err);
                                                 return;
@@ -90,19 +90,19 @@ test('user crud', function (t) {
                         },
                         // Delete
                         function (_, cb) {
-                                Db.deleteUser(n, function (err) {
+                                DB.deleteUser(n, function (err) {
                                         cb(err);
                                 });
                         },
                         // Double delete to verify idempotency
                         function (_, cb) {
-                                Db.deleteUser(n, function (err) {
+                                DB.deleteUser(n, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get && Verify Delete
                         function (_, cb) {
-                                Db.getUser(n, function (err, user) {
+                                DB.getUser(n, function (err, user) {
                                         if (err) {
                                                 cb(err);
                                                 return;
@@ -131,13 +131,13 @@ test('member crud', function (t) {
                         // Create
                         function (_, cb) {
                                 var m = { id: id, fullName: n1 };
-                                Db.putMember(m, function (err) {
+                                DB.putMember(m, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get
                         function (_, cb) {
-                                Db.getMember(id, function (err, member) {
+                                DB.getMember(id, function (err, member) {
                                         if (err) {
                                                 cb(err);
                                                 return;
@@ -152,25 +152,25 @@ test('member crud', function (t) {
                         // Update
                         function (_, cb) {
                                 var m = { id: id, fullName: n2 };
-                                Db.putMember(m, function (err) {
+                                DB.putMember(m, function (err) {
                                         cb(err);
                                 });
                         },
                         function (_, cb) {
                                 var args = { id: id, known: 'no' };
-                                Db.updateKnown(args, function (err) {
+                                DB.updateKnown(args, function (err) {
                                         cb(err);
                                 });
                         },
                         function (_, cb) {
                                 var args = { id: id, active: 'yes' };
-                                Db.updateActive(args, function (err) {
+                                DB.updateActive(args, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get && Verify Update
                         function (_, cb) {
-                                Db.getMember(id, function (err, member) {
+                                DB.getMember(id, function (err, member) {
                                         if (err) {
                                                 cb(err);
                                                 return;
@@ -207,13 +207,13 @@ test('comments', function (t) {
                                              createTime: d1,
                                              comment: c1
                                            };
-                                Db.addComment(opts, function (err) {
+                                DB.addComment(opts, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get and Verify
                         function (_, cb) {
-                                Db.getComments(member.id, function (err, res) {
+                                DB.getComments(member.id, function (err, res) {
                                         assert.ok(res.length === 1);
                                         assert.object(res[0]);
                                         assert.equal(res[0].id, member.id);
@@ -228,13 +228,13 @@ test('comments', function (t) {
                                              createTime: d2,
                                              comment: c2
                                            };
-                                Db.addComment(opts, function (err) {
+                                DB.addComment(opts, function (err) {
                                         cb(err);
                                 });
                         },
                         // Get and Verify both, correct order
                         function (_, cb) {
-                                Db.getComments(member.id, function (err, res) {
+                                DB.getComments(member.id, function (err, res) {
                                         assert.ok(res.length === 2);
                                         assert.object(res[0]);
                                         assert.object(res[1]);
@@ -245,6 +245,68 @@ test('comments', function (t) {
                                         assert.equal(res[1].createTime, d2);
                                         assert.equal(res[1].comment, c2);
                                         cb(err);
+                                });
+                        }
+                ]
+        }, function (err) {
+                if (err) {
+                        t.fail(err);
+                        return;
+                }
+                t.done();
+        });
+
+});
+
+test('mls', function (t) {
+        var file = 'data/db.test.js/sample_mls_dump.csv';
+        var r = null;
+        vasync.pipeline({
+                funcs: [
+                        function (_, cb) {
+                                var error = false;
+                                r = fs.createReadStream(file);
+
+                                r.on('open', function () {
+                                        var opts = {
+                                                'reader': r
+                                        };
+                                        DB.loadMls(opts, function (err) {
+                                                if (!error) {
+                                                        cb(err);
+                                                }
+                                        });
+                                });
+
+                                r.on('error', function (err) {
+                                        error = true;
+                                        cb(err);
+                                });
+                        },
+                        function (_, cb) {
+                                DB.getAllMls(function (err, res) {
+                                        //Test some random rows.
+                                        assert.ok(res.length === 2);
+                                        assert.ok(res[0].recordNumber ===
+                                                  '000');
+                                        assert.ok(res[0].fullName ===
+                                                  'Smith, Ross');
+                                        assert.ok(res[1].recordNumber ===
+                                                  '001');
+                                        assert.ok(res[1].isMember ===
+                                                  'Yes');
+                                        cb();
+                                });
+                        },
+                        function (_, cb) {
+                                DB.getJoinedMember('000', function (err, m) {
+                                        assert.object(m, 'member');
+                                        assert.equal('000', m.id);
+                                        assert.equal('000', m.recordNumber);
+                                        assert.equal('Smith, Ross', m.fullName);
+                                        assert.ok(null === m.known);
+                                        assert.ok(null === m.active);
+                                        cb();
                                 });
                         }
                 ]
