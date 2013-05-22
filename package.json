@@ -11,6 +11,7 @@
     "bunyan": "latest",
     "carrier": "latest",
     "node-static": "latest",
+    "optimist": "latest",
     "restify": "latest",
     "sqlite3": "latest",
     "vasync": "latest"
