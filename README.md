@@ -42,11 +42,11 @@ http://www.sqlite.org/sqlite.html), but this should get you started:
 1. ✓ Define CLI
 1. ✓ Sqlite schema
 1. ✓ Persistence layer
+1. Import cli
+1. Add/delete user cli
 1. Restify security filter
 1. Implement API over persistence
-1. Import cli
 1. Export cli
-1. Add/delete user cli
 1. "Login"
 1. Web App
 

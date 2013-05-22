@@ -1,0 +1,5 @@
+{
+    "port": 8080,
+    "dbFile": "/tmp/mini-lds-tools.db",
+    "staticDirectory": "./static"
+}
